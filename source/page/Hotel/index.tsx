@@ -7,7 +7,7 @@ import { Button } from 'boot-cell/source/Form/Button';
 import { DropMenu } from 'boot-cell/source/Navigator/DropMenu';
 import 'boot-cell/source/Content/EdgeDetector';
 import { EdgeEvent } from 'boot-cell/source/Content/EdgeDetector';
-import { hotelCanStaying, session } from '../../model';
+import { hotel, session } from '../../model';
 import { relativeTimeTo, TimeUnitName } from '../../utility';
 
 interface HotelPageState {
@@ -21,20 +21,21 @@ interface HotelPageState {
     renderTarget: 'children'
 })
 export class HotelPage extends mixin<{}, HotelPageState>() {
-    state = {
-        loading: true,
-        noMore: false
-    };
+    state = { loading: false, noMore: false };
 
     loadMore = async ({ detail }: EdgeEvent) => {
         if (detail !== 'bottom' || this.state.noMore) return;
+
         await this.setState({ loading: true });
-        const data = await hotelCanStaying.getNextPage();
+
+        const data = await hotel.getNextPage();
+
         await this.setState({ loading: false, noMore: !data });
     };
 
     async clip2board(raw: string) {
         await clipboard.writeText(raw);
+
         self.alert('已复制到剪贴板');
     }
 
@@ -95,7 +96,7 @@ export class HotelPage extends mixin<{}, HotelPageState>() {
                                 block
                                 className="mt-3"
                                 onClick={() => {
-                                    hotelCanStaying.delete(objectId);
+                                    hotel.delete(objectId);
                                 }}
                             >
                                 删除
@@ -120,7 +121,7 @@ export class HotelPage extends mixin<{}, HotelPageState>() {
                 </header>
                 <edge-detector onTouchEdge={this.loadMore}>
                     <div className="card-deck justify-content-around">
-                        {hotelCanStaying.list.map(this.renderItem)}
+                        {hotel.list.map(this.renderItem)}
                     </div>
                     <p slot="bottom" className="text-center mt-2">
                         {noMore ? '没有更多数据了' : '加载更多...'}

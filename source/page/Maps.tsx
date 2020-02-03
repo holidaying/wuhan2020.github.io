@@ -2,54 +2,61 @@ import { component, createCell, mixin } from 'web-cell';
 import { SpinnerBox } from 'boot-cell/source/Prompt/Spinner';
 import { Table } from 'boot-cell/source/Content/Table';
 
-import { repository } from '../service';
-
-//此处需要考虑到证号可能含有字母
-//COMMIT_EN:consider identify_code as potential string because there may be chars
-interface Clinic {
+interface Map {
     name: string;
     url: string;
-    contacts: string;
-    time: string;
 }
 
-interface ClinicPageState {
+interface MapPageState {
     loading?: boolean;
-    list?: Clinic[];
+    list?: Map[];
 }
 
 @component({
-    tagName: 'clinic-page',
+    tagName: 'maps-page',
     renderTarget: 'children'
 })
-export class ClinicPage extends mixin<{}, ClinicPageState>() {
-    state = { loading: false, list: [] };
+export class MapsPage extends mixin<{}, ClinicPageState>() {
+    state = { loading: true, list: [] };
 
     async connectedCallback() {
         super.connectedCallback();
 
-        const list = await repository.getContents('data/Logistics.yml');
+        // Here are the data where I find form issue #56, if the api-server has the data, plz change
+        const list: Map[] = [
+            {
+                name: '丁香园',
+                url: 'https://ncov.dxy.cn/ncovh5/view/pneumonia'
+            },
+            {
+                name: '腾讯',
+                url: 'https://news.qq.com/zt2020/page/feiyan.htm'
+            },
+            {
+                name: '百度',
+                url: 'https://voice.baidu.com/act/newpneumonia/newpneumonia'
+            }
+        ];
 
         await this.setState({ loading: false, list });
     }
 
-    render(_, { loading, list }: ClinicPageState) {
+    render(_, { loading, list }: MapPageState) {
         return (
             <SpinnerBox cover={loading}>
                 <header className="d-flex justify-content-between align-item-center my-3">
-                    <h2>义诊服务</h2>
+                    <h2>疫情地图</h2>
                 </header>
 
                 <Table center striped hover>
                     <thead>
                         <tr>
-                            <th>机构 / 个人</th>
-                            <th>联系方式</th>
-                            <th>接诊时间</th>
+                            <th>地图来源</th>
+                            <th>地图链接</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {list.map(({ name, url, contacts, time }: Clinic) => (
+                        {list.map(({ name, url }: Map) => (
                             <tr>
                                 <td className="text-nowrap">
                                     {url ? (
@@ -60,8 +67,7 @@ export class ClinicPage extends mixin<{}, ClinicPageState>() {
                                         name
                                     )}
                                 </td>
-                                <td className="text-nowrap">{contacts}</td>
-                                <td className="text-nowrap">{time}</td>
+                                <td className="text-nowrap">{url}</td>
                             </tr>
                         ))}
                     </tbody>

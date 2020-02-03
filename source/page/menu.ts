@@ -4,7 +4,8 @@ export enum RouteRoot {
     Hotel = 'hotel',
     Factory = 'factory',
     Donation = 'donation',
-    Clinic = 'clinic'
+    Clinic = 'clinic',
+    Maps = 'maps'
 }
 
 export default [
@@ -37,10 +38,15 @@ export default [
         href: RouteRoot.Donation,
         icon: 'heart'
     },
+    // {
+    //     title: '义诊',
+    //     href: RouteRoot.Clinic,
+    //     icon: 'user-md'
+    // },
     {
-        title: '义诊',
-        href: RouteRoot.Clinic,
-        icon: 'user-md'
+        title: '疫情地图',
+        href: RouteRoot.Maps,
+        icon: 'map'
     },
     {
         title: '开放源代码',
